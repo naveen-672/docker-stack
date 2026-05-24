@@ -1,0 +1,74 @@
+services:
+  bus:
+    image: naveenkumar30/paytm:bus
+    ports:
+      - "1111:80"
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.25"
+          memory: 64M
+    restart: unless-stopped
+    networks:
+      - stack_network
+    volumes:
+      - bus:/usr
+    env_file:
+      - bus.env
+
+  flight:
+    image: naveenkumar30/paytm:flight
+    ports:
+      - "1112:80"
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.25"
+          memory: 64M
+    restart: unless-stopped
+    depends_on:
+      - bus
+    networks:
+      - stack_network
+    volumes:
+      - flight:/usr
+    env_file:
+      - flight.env
+
+  movie:
+    image: naveenkumar30/paytm:movie
+    ports:
+      - "1113:80"
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.25"
+          memory: 64M
+    restart: unless-stopped
+    networks:
+      - stack_network
+    volumes:
+      - movie:/usr
+    env_file:
+      - movie.env
+
+networks:
+  stack_network:
+    driver: overlay
+
+volumes:
+  bus:
+  flight:
+  movie:
